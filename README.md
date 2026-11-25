@@ -8,7 +8,7 @@ Kartu edukasi augmented reality untuk empat karya patung Artmeru Gallery, berbas
 - `js/main.js`: membangun scene MindAR dari data, deteksi kartu, interaksi model, panel info
 - `css/style.css`: gaya antarmuka (palet artmeru.com, huruf Inter)
 - `data/artworks.json`: data empat karya (judul, seniman, media, model, gambar, skala, posisi, scene VR)
-- `assets/img/`: gambar untuk antarmuka. `karya-0X.webp` potongan foto patung untuk panggung di halaman awal, `kartu-0X.webp` kartu ukuran kecil
+- `assets/img/`: gambar untuk antarmuka. `karya-0X.webp` potongan foto patung, `kartu-0X.webp` kartu ukuran kecil untuk kartu 3D di halaman awal
 - `assets/cards/`: desain kartu yang dicetak
 - `assets/targets/`: `targets.mind` dan gambar sumbernya di `src/`
 - `assets/models/`: model 3D `.glb` hasil pindaian karya (izin seniman dan galeri)
@@ -35,7 +35,7 @@ Model sudah dikompres (geometri disederhanakan, tekstur WebP 1024 px) dan dimuat
 
 ## Cara kerja
 
-1. Halaman awal menampilkan panggung yang bergantian memperlihatkan keempat karya (ketuk untuk pindah, tahan untuk berhenti sejenak), petunjuk, dan tombol **Mulai pindai**. Kamera baru diminta setelah tombol ditekan.
+1. Halaman awal berisi kartu 3D yang patungnya berdiri dari gambarnya dan bergantian memperlihatkan keempat karya (ketuk untuk pindah, tahan untuk berhenti sejenak), tiga langkah pemakaian, daftar karya, dan tautan lembar kartu. Kamera baru diminta setelah tombol **Mulai pindai** ditekan.
 2. `js/main.js` membaca `data/artworks.json`, lalu membuat satu `mindar-image-target` per karya. Menambah atau mengubah karya cukup lewat file JSON itu.
 3. Saat kartu terdeteksi, model muncul di atas kartu dan lembar info meluncur naik berisi judul, seniman, tahun, media, ukuran, dan deskripsi. Lembar bisa dilipat lewat pegangannya (ketuk atau usap), dan turun lagi sekitar satu detik setelah kartu lepas dari kamera.
 4. Geser satu jari untuk memutar model, cubit (atau roda mouse) untuk memperbesar, **Atur ulang** untuk mengembalikan.

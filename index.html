@@ -15,52 +15,105 @@
 </head>
 <body>
   <!-- Halaman awal (RF-AR-01) -->
-  <main id="awal" class="awal">
-    <header class="kepala">
-      <div class="merek">Artmeru <b>AR</b></div>
-      <div class="kepala-ket">Artmeru Gallery, Malang</div>
+  <div id="awal" class="awal">
+    <header class="nav">
+      <a class="merek" href="#atas">Artmeru <b>AR</b></a>
+      <nav class="nav-tautan" aria-label="Bagian halaman">
+        <a href="#cara">Cara pakai</a>
+        <a href="#karya">Karya</a>
+        <a href="#kartu">Kartu</a>
+      </nav>
+      <button class="tombol utama kecil nav-mulai" type="button" data-mulai>Mulai pindai</button>
     </header>
 
-    <!-- Panggung: keempat karya bergantian, diisi js/main.js dari data/artworks.json -->
-    <section id="panggung" class="panggung" aria-label="Empat karya di kartu Artmeru AR"></section>
+    <main id="atas">
+      <section class="hero">
+        <div class="hero-teks">
+          <h1>Pindai kartu, lihat patungnya dalam 3D.</h1>
+          <p class="lead">Arahkan kamera ke kartu Artmeru AR. Patungnya berdiri di atas kartu, bisa diputar, diperbesar, dan dibaca keterangannya.</p>
+          <div class="hero-aksi">
+            <button class="tombol utama besar" type="button" data-mulai>
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9V6.5A2.5 2.5 0 0 1 6.5 4H9M15 4h2.5A2.5 2.5 0 0 1 20 6.5V9M20 15v2.5a2.5 2.5 0 0 1-2.5 2.5H15M9 20H6.5A2.5 2.5 0 0 1 4 17.5V15M8 12h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Mulai pindai
+            </button>
+            <a class="tombol lembut besar" href="#karya">Lihat karyanya</a>
+          </div>
+        </div>
 
-    <section class="isi">
-      <h1>Pindai kartu, lihat patungnya dalam 3D.</h1>
-      <p class="lead">Arahkan kamera ke kartu Artmeru AR. Model 3D karya muncul di atas kartu bersama keterangannya.</p>
+        <!-- Kartu 3D: patung berdiri dari gambarnya di kartu. Diisi js/main.js dari data/artworks.json -->
+        <div class="hero-visual">
+          <div id="panggung" class="adegan" aria-label="Empat karya di kartu Artmeru AR"></div>
+          <div class="keterangan">
+            <div id="ket" class="ket"><b id="ket-judul"></b><span id="ket-sub"></span></div>
+            <div id="ruas" class="ruas" aria-hidden="true"></div>
+          </div>
+        </div>
+      </section>
 
-      <ol class="langkah">
-        <li><b>Siapkan kartu</b><span>Cetak lembar kartu, atau buka gambar kartu di layar lain.</span></li>
-        <li><b>Izinkan kamera</b><span>Tekan Mulai pindai, lalu izinkan akses kamera.</span></li>
-        <li><b>Arahkan ke kartu</b><span>Letakkan kartu di meja, kira-kira 20 sampai 40 cm dari kamera. Lihat dari arah agak miring supaya patung tampak berdiri.</span></li>
-      </ol>
-    </section>
+      <section id="cara" class="bagian">
+        <div class="bagian-kepala muncul">
+          <h2>Tiga langkah, tanpa memasang aplikasi.</h2>
+          <p>Semuanya berjalan di browser HP. Yang dibutuhkan hanya kartu dan kamera.</p>
+        </div>
+        <ol class="langkah">
+          <li class="muncul">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="13" y="7" width="22" height="34" rx="3.5"/><path d="M18 16h12M18 30h8M18 35h5"/><circle cx="29" cy="23" r="3.2" class="isi"/></svg>
+            <b>Siapkan kartu</b>
+            <span>Cetak lembar kartu, atau buka gambar kartu di layar laptop.</span>
+          </li>
+          <li class="muncul">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 17a4 4 0 0 1 4-4h4.5l2.5-4h10l2.5 4H36a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4z"/><circle cx="24" cy="25" r="7"/><circle cx="24" cy="25" r="2.6" class="isi"/></svg>
+            <b>Izinkan kamera</b>
+            <span>Tekan Mulai pindai, lalu izinkan akses kamera saat diminta.</span>
+          </li>
+          <li class="muncul">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 34l15 7 15-7-15-7z"/><path d="M24 30V10" class="aksen"/><path d="M18 15l6-6 6 6" class="aksen"/></svg>
+            <b>Arahkan ke kartu</b>
+            <span>Letakkan kartu di meja, 20 sampai 40 cm dari kamera. Lihat agak dari atas supaya patung tampak berdiri.</span>
+          </li>
+        </ol>
+      </section>
 
-    <section class="kartu">
-      <div class="kartu-teks">
-        <h2>Belum punya kartu?</h2>
-        <p>Satu lembar A4 berisi keempat kartu. Cetak, atau buka di layar lain lalu pindai dari sana.</p>
-        <a class="tombol lembut" href="assets/cards/kartu-cetak-a4.pdf" target="_blank" rel="noopener">Buka lembar kartu</a>
-      </div>
-      <div class="kipas" aria-hidden="true">
-        <img src="assets/img/kartu-03.webp" alt="" width="360" height="504" loading="lazy" decoding="async" />
-        <img src="assets/img/kartu-02.webp" alt="" width="360" height="504" loading="lazy" decoding="async" />
-        <img src="assets/img/kartu-01.webp" alt="" width="360" height="504" loading="lazy" decoding="async" />
-      </div>
-    </section>
+      <section id="karya" class="bagian gelap">
+        <div class="bagian-kepala muncul">
+          <h2>Empat karya Gatot Kumaidi.</h2>
+          <p>Setiap karya punya satu kartu. Keterangannya diambil dari artmeru.com.</p>
+        </div>
+        <!-- Diisi js/main.js dari data/artworks.json -->
+        <div id="daftar-karya" class="daftar-karya"></div>
+      </section>
+
+      <section id="kartu" class="bagian">
+        <div class="kartu muncul">
+          <div class="kartu-teks">
+            <h2>Belum punya kartu?</h2>
+            <p>Satu lembar A4 berisi keempat kartu. Cetak di kertas tebal yang tidak mengilap, atau buka di layar laptop lalu pindai dari sana.</p>
+            <a class="tombol gelap" href="assets/cards/kartu-cetak-a4.pdf" target="_blank" rel="noopener">Buka lembar kartu</a>
+          </div>
+          <div class="kipas" aria-hidden="true">
+            <img src="assets/img/kartu-03.webp" alt="" width="720" height="1008" loading="lazy" decoding="async" />
+            <img src="assets/img/kartu-02.webp" alt="" width="720" height="1008" loading="lazy" decoding="async" />
+            <img src="assets/img/kartu-01.webp" alt="" width="720" height="1008" loading="lazy" decoding="async" />
+          </div>
+        </div>
+      </section>
+    </main>
 
     <footer class="kaki">
-      <span>Karya Gatot Kumaidi, Artmeru Gallery</span>
-      <span>MeruVerse, Kelompok 3</span>
+      <div class="merek">Artmeru <b>AR</b></div>
+      <p>Kartu edukasi augmented reality untuk karya patung di Artmeru Gallery, Malang.</p>
+      <p class="kaki-kecil">MeruVerse, Kelompok 3. Final project Realitas Terkembang, FILKOM UB. <a class="tautan" href="https://www.artmeru.com/id" target="_blank" rel="noopener">artmeru.com</a></p>
     </footer>
 
+    <!-- HP: tombol utama menempel di bawah layar. Pesan galat muncul di sini pada semua ukuran layar -->
     <div class="aksi">
       <p id="pesan" class="pesan" role="alert" hidden></p>
-      <button id="mulai" class="tombol utama besar" type="button">
+      <button id="mulai" class="tombol utama besar" type="button" data-mulai>
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9V6.5A2.5 2.5 0 0 1 6.5 4H9M15 4h2.5A2.5 2.5 0 0 1 20 6.5V9M20 15v2.5a2.5 2.5 0 0 1-2.5 2.5H15M9 20H6.5A2.5 2.5 0 0 1 4 17.5V15M8 12h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         Mulai pindai
       </button>
     </div>
-  </main>
+  </div>
 
   <!-- Tampilan pindai: kamera, scene AR, dan lembar info. data-keadaan: memuat | mencari | karya -->
   <div id="pindai" class="pindai" data-keadaan="memuat" hidden>

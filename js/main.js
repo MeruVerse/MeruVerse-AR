@@ -30,7 +30,8 @@
 
   const $ = (id) => document.getElementById(id);
   const ui = {
-    awal: $('awal'), mulai: $('mulai'), pesan: $('pesan'), panggung: $('panggung'),
+    awal: $('awal'), pesan: $('pesan'), panggung: $('panggung'), ruas: $('ruas'), daftar: $('daftar-karya'),
+    ket: $('ket'), ketJudul: $('ket-judul'), ketSub: $('ket-sub'),
     pindai: $('pindai'), ar: $('ar'), selesai: $('selesai'), petunjuk: $('petunjuk-teks'),
     panel: $('panel'), kepala: $('p-kepala'), no: $('p-no'), judul: $('p-judul'), sub: $('p-sub'),
     media: $('p-media'), ukuran: $('p-ukuran'), deskripsi: $('p-deskripsi'), sumber: $('p-sumber'),
@@ -63,44 +64,105 @@
     ui.pesan.hidden = !teks;
   }
 
-  // Panggung: keempat karya bergantian. Ruas kemajuan yang selesai terisi memicu karya berikutnya.
+  // Ukuran kartu cetak (mm) dan letak pusat target di kartu, untuk menaruh patung di kartu 3D halaman awal
+  const KARTU = { lebar: 95, tinggi: 133, pusatX: 47.5, pusatY: 47.47 };
+
+  // Adegan 3D: kartu tergeletak miring dan potongan foto patung berdiri dari gambarnya di kartu.
+  // Keempat karya bergantian. Ruas kemajuan yang selesai terisi memicu karya berikutnya.
   function buatPanggung(data) {
-    const slide = data.artworks.map((k, i) => `
-      <figure class="slide">
-        <span class="slide-angka" aria-hidden="true">${duaAngka(i + 1)}</span>
-        ${k.image ? `<img src="${esc(k.image)}" alt="${esc(k.title)}, patung karya ${esc(k.artist)}" decoding="async">` : ''}
-        <figcaption><b>${esc(k.title)}</b><span>${esc(k.artist)}, ${esc(k.year)}</span></figcaption>
-      </figure>`).join('');
-    ui.panggung.innerHTML = `${slide}<div class="ruas" aria-hidden="true">${data.artworks.map(() => '<i><u></u></i>').join('')}</div>`;
+    const lebarTarget = Number(data.targetWidthMm) || 87;
+    const lapis = data.artworks.map((k, i) => {
+      const [px, py] = String(k.position).split(' ').map(Number);
+      const x = (KARTU.pusatX + px * lebarTarget) / KARTU.lebar;
+      const y = (KARTU.pusatY - py * lebarTarget) / KARTU.tinggi;
+      const kartu = `assets/img/kartu-${duaAngka(i + 1)}.webp`;
+      return `
+      <div class="lapis" style="--x: ${x.toFixed(4)}; --y: ${y.toFixed(4)}; --h: 0.95">
+        <img class="kartu3d" src="${kartu}" alt="" decoding="async">
+        <div class="bayang"></div>
+        ${k.image ? `<img class="tegak" src="${esc(k.image)}" alt="${esc(k.title)}, patung karya ${esc(k.artist)}" decoding="async">` : ''}
+      </div>`;
+    }).join('');
+    ui.panggung.innerHTML = `<div class="meja">${lapis}</div>`;
+    ui.ruas.innerHTML = data.artworks.map(() => '<i><u></u></i>').join('');
     ui.panggung.tabIndex = 0;
     ui.panggung.setAttribute('role', 'button');
     ui.panggung.setAttribute('aria-label', 'Empat karya di kartu Artmeru AR. Tekan untuk melihat karya berikutnya.');
 
-    ui.panggung.addEventListener('animationend', (e) => { if (e.animationName === 'isi') tampilSlide(st.slide + 1); });
+    // Tinggi patung mengikuti bentuk fotonya: karya yang melebar dibuat lebih pendek
+    ui.panggung.querySelectorAll('.tegak').forEach((img) => {
+      const atur = () => { if (img.naturalWidth) img.parentElement.style.setProperty('--h', Math.min(0.95, 0.88 * img.naturalHeight / img.naturalWidth).toFixed(3)); };
+      if (img.complete) atur(); else img.addEventListener('load', atur, { once: true });
+    });
+
+    const visual = ui.panggung.parentElement;
+    ui.ruas.addEventListener('animationend', (e) => { if (e.animationName === 'isi') tampilSlide(st.slide + 1); });
     ui.panggung.addEventListener('click', () => tampilSlide(st.slide + 1));
     ui.panggung.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight') { e.preventDefault(); tampilSlide(st.slide + 1); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); tampilSlide(st.slide - 1); }
     });
-    // Tahan jari di panggung untuk berhenti sejenak
-    ui.panggung.addEventListener('pointerdown', () => ui.panggung.classList.add('jeda'));
-    ['pointerup', 'pointercancel', 'pointerleave'].forEach((n) => ui.panggung.addEventListener(n, () => ui.panggung.classList.remove('jeda')));
+    // Tahan jari di adegan untuk berhenti sejenak
+    ui.panggung.addEventListener('pointerdown', () => visual.classList.add('jeda'));
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach((n) => ui.panggung.addEventListener(n, () => visual.classList.remove('jeda')));
+
+    // Dengan mouse, kartu ikut miring mengikuti penunjuk
+    const meja = ui.panggung.querySelector('.meja');
+    visual.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || tanpaGerak()) return;
+      const r = visual.getBoundingClientRect();
+      meja.style.setProperty('--rz', `${(((e.clientX - r.left) / r.width) - 0.5) * 16}deg`);
+      meja.style.setProperty('--rx', `${(0.5 - ((e.clientY - r.top) / r.height)) * 10}deg`);
+    });
+    visual.addEventListener('pointerleave', () => { meja.style.removeProperty('--rz'); meja.style.removeProperty('--rx'); });
 
     requestAnimationFrame(() => tampilSlide(0));
   }
 
   function tampilSlide(i) {
-    const slide = ui.panggung.querySelectorAll('.slide');
-    const ruas = ui.panggung.querySelectorAll('.ruas i');
-    if (!slide.length) return;
-    st.slide = (i + slide.length) % slide.length;
-    slide.forEach((s, n) => s.classList.toggle('aktif', n === st.slide));
+    const lapis = ui.panggung.querySelectorAll('.lapis');
+    const ruas = ui.ruas.querySelectorAll('i');
+    if (!lapis.length) return;
+    st.slide = (i + lapis.length) % lapis.length;
+    lapis.forEach((l, n) => l.classList.toggle('aktif', n === st.slide));
+    const k = st.data.artworks[st.slide];
+    ui.ketJudul.textContent = k.title;
+    ui.ketSub.textContent = [k.artist, k.year].filter(Boolean).join(', ');
+    ui.ket.classList.remove('ganti');
     ruas.forEach((r, n) => {
       r.classList.remove('jalan');
       r.classList.toggle('lewat', n < st.slide);
     });
-    void ui.panggung.offsetWidth; // mulai ulang animasi ruas
+    void ui.ruas.offsetWidth; // mulai ulang animasi ruas dan keterangan
+    ui.ket.classList.add('ganti');
     ruas[st.slide].classList.add('jalan');
+  }
+
+  // Bagian "Empat karya": satu kartu per karya
+  function buatDaftarKarya(data) {
+    ui.daftar.innerHTML = data.artworks.map((k, i) => `
+      <article class="karya-item muncul">
+        <div class="karya-gambar">
+          <span class="karya-angka" aria-hidden="true">${duaAngka(i + 1)}</span>
+          ${k.image ? `<img src="${esc(k.image)}" alt="${esc(k.title)}, patung karya ${esc(k.artist)}" loading="lazy" decoding="async">` : ''}
+        </div>
+        <div class="karya-teks">
+          <h3>${esc(k.title)}</h3>
+          <p class="oleh">${esc([k.artist, k.year].filter(Boolean).join(', '))}</p>
+          <p class="uraian">${esc(k.description || '')}</p>
+          <dl><dt>Media</dt><dd>${esc(k.medium || '-')}</dd><dt>Ukuran</dt><dd>${esc(k.size || '-')}</dd></dl>
+        </div>
+      </article>`).join('');
+  }
+
+  // Elemen .muncul tampil sekali saat masuk layar
+  function pasangMuncul() {
+    const el = document.querySelectorAll('.muncul');
+    if (!('IntersectionObserver' in window) || tanpaGerak()) { el.forEach((e) => e.classList.add('tampak')); return; }
+    const io = new IntersectionObserver((masuk) => {
+      masuk.forEach((m) => { if (m.isIntersecting) { m.target.classList.add('tampak'); io.unobserve(m.target); } });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    el.forEach((e) => io.observe(e));
   }
 
   function bisaMemindai() {
@@ -449,7 +511,8 @@
 
   // ---------- Awal ----------
 
-  ui.mulai.addEventListener('click', mulai);
+  document.documentElement.classList.add('js');
+  document.querySelectorAll('[data-mulai]').forEach((b) => b.addEventListener('click', mulai));
   ui.selesai.addEventListener('click', selesai);
   ui.reset.addEventListener('click', aturUlang);
   ui.lipat.addEventListener('click', () => lipat());
@@ -464,6 +527,6 @@
 
   fetch('data/artworks.json')
     .then((res) => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
-    .then((data) => { st.data = data; buatPanggung(data); })
-    .catch((err) => { console.error('Gagal memuat artworks.json', err); pesan('Data karya gagal dimuat. Muat ulang halaman.'); });
+    .then((data) => { st.data = data; buatPanggung(data); buatDaftarKarya(data); pasangMuncul(); })
+    .catch((err) => { console.error('Gagal memuat artworks.json', err); pasangMuncul(); pesan('Data karya gagal dimuat. Muat ulang halaman.'); });
 })();
