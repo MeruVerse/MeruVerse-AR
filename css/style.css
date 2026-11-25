@@ -44,7 +44,10 @@ ol, ul { list-style: none; }
 img { display: block; max-width: 100%; }
 button { font: inherit; color: inherit; }
 
-.merek { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; color: inherit; text-decoration: none; }
+.merek { display: inline-flex; align-items: center; gap: 9px; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; color: inherit; text-decoration: none; }
+/* Tanda merek dari Artmeru VR: cincin dan puncak gunung */
+.merek-tanda { flex: none; }
+.merek-tanda path { fill: var(--aksen); }
 .merek b { color: var(--aksen); font-weight: 800; }
 
 .tautan {
