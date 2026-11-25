@@ -1,8 +1,74 @@
 {
+  "targets": "assets/targets/targets.mind",
+  "targetWidthMm": 87,
   "artworks": [
-    { "id": "karya-01", "targetIndex": 0, "title": "", "artist": "", "year": "", "medium": "Kayu dan batu", "size": "", "description": "", "model": "assets/models/karya-01.glb", "vrScene": "" },
-    { "id": "karya-02", "targetIndex": 1, "title": "", "artist": "", "year": "", "medium": "Kayu", "size": "", "description": "", "model": "assets/models/karya-02.glb", "vrScene": "" },
-    { "id": "karya-03", "targetIndex": 2, "title": "", "artist": "", "year": "", "medium": "Kayu", "size": "", "description": "", "model": "assets/models/karya-03.glb", "vrScene": "" },
-    { "id": "karya-04", "targetIndex": 3, "title": "", "artist": "", "year": "", "medium": "Kayu", "size": "", "description": "", "model": "assets/models/karya-04.glb", "vrScene": "" }
+    {
+      "id": "karya-01",
+      "targetIndex": 0,
+      "title": "Kait",
+      "artist": "Gatot Kumaidi",
+      "year": "2025",
+      "medium": "Kayu jati, besi, batu kali",
+      "size": "20 × 20 × 40 cm",
+      "description": "Kait dihadirkan sebagai metafora manusia yang mampu menyesuaikan diri di mana pun, kapan pun, dan dalam keadaan apa pun. Bentuk abstrak menyerupai kait dipadukan dengan batu.",
+      "model": "assets/models/karya-01.glb",
+      "card": "assets/cards/karya-01.jpg",
+      "scale": 1.75,
+      "position": "0.19 -0.37 0",
+      "rotation": "90 0 0",
+      "vrScene": "",
+      "source": "https://www.artmeru.com/id/artworks/kait"
+    },
+    {
+      "id": "karya-02",
+      "targetIndex": 1,
+      "title": "Relax",
+      "artist": "Gatot Kumaidi",
+      "year": "1995",
+      "medium": "Kayu jati",
+      "size": "15 × 15 × 21 cm",
+      "description": "Karya ini berangkat dari latihan melenturkan sesuatu yang kaku dan lurus, sehingga menghadirkan kesan santai.",
+      "model": "assets/models/karya-02.glb",
+      "card": "assets/cards/karya-02.jpg",
+      "scale": 2.95,
+      "position": "0.11 -0.39 0",
+      "rotation": "90 0 0",
+      "vrScene": "",
+      "source": "https://www.artmeru.com/id/artworks/relax"
+    },
+    {
+      "id": "karya-03",
+      "targetIndex": 2,
+      "title": "Kawan Bergelut",
+      "artist": "Gatot Kumaidi",
+      "year": "2024",
+      "medium": "Kayu jati dan kayu leci",
+      "size": "11 × 14 × 12,5 cm",
+      "description": "Dua bentuk yang saling mengait menggambarkan persahabatan: dekat secara batin sejak kecil, tetapi kini menempuh jalan yang berbeda.",
+      "model": "assets/models/karya-03.glb",
+      "card": "assets/cards/karya-03.jpg",
+      "scale": 3.85,
+      "position": "0.02 -0.36 0",
+      "rotation": "90 0 0",
+      "vrScene": "",
+      "source": "https://www.artmeru.com/id/artworks/kawan-bergelut"
+    },
+    {
+      "id": "karya-04",
+      "targetIndex": 3,
+      "title": "Menetes",
+      "artist": "Gatot Kumaidi",
+      "year": "1995",
+      "medium": "Kayu jati",
+      "size": "15 × 15 × 35 cm",
+      "description": "Batang kayu dibentuk hingga menyerupai tetesan air, merujuk pada gerak cairan yang jatuh karena gravitasi.",
+      "model": "assets/models/karya-04.glb",
+      "card": "assets/cards/karya-04.jpg",
+      "scale": 2.55,
+      "position": "0.01 -0.39 0",
+      "rotation": "90 0 0",
+      "vrScene": "",
+      "source": "https://www.artmeru.com/id/artworks/menetes"
+    }
   ]
 }
