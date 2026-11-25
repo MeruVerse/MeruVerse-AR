@@ -4,10 +4,11 @@ Kartu edukasi augmented reality untuk empat karya patung Artmeru Gallery, berbas
 
 ## Struktur
 
-- `index.html`: halaman dan scene MindAR
-- `js/main.js`: logika deteksi kartu, interaksi model, panel info
-- `css/style.css`: gaya antarmuka
-- `data/artworks.json`: data empat karya (judul, seniman, media, model, scene VR)
+- `index.html`: halaman awal, tampilan pindai, dan lembar info
+- `js/main.js`: membangun scene MindAR dari data, deteksi kartu, interaksi model, panel info
+- `css/style.css`: gaya antarmuka (palet artmeru.com, huruf Inter)
+- `data/artworks.json`: data empat karya (judul, seniman, media, model, gambar, skala, posisi, scene VR)
+- `assets/img/`: gambar untuk antarmuka. `karya-0X.webp` potongan foto patung untuk panggung di halaman awal, `kartu-0X.webp` kartu ukuran kecil
 - `assets/cards/`: desain kartu yang dicetak
 - `assets/targets/`: `targets.mind` dan gambar sumbernya di `src/`
 - `assets/models/`: model 3D `.glb` hasil pindaian karya (izin seniman dan galeri)
@@ -30,7 +31,30 @@ Semua karya oleh Gatot Kumaidi. Data karya diambil dari artmeru.com.
 
 ## Model
 
-Model sudah dikompres (geometri disederhanakan, tekstur WebP 1024 px) dan dimuat tanpa decoder tambahan di A-Frame 1.5.0. Model berdiri di sumbu Y dengan titik pusat di dasarnya, jadi di atas kartu perlu `rotation="90 0 0"`. Nilai `scale` dan `position` awal tiap model ada di `data/artworks.json`. `position` menaruh model di dasar gambar patung pada kartu. Keduanya masih perlu disetel di HP.
+Model sudah dikompres (geometri disederhanakan, tekstur WebP 1024 px) dan dimuat tanpa decoder tambahan di A-Frame 1.5.0. Model berdiri di sumbu Y dengan titik pusat di dasarnya, jadi di atas kartu perlu `rotation="90 0 0"`. Nilai `scale` dan `position` tiap model ada di `data/artworks.json`. `position` menaruh model di dasar gambar patung pada kartu, dan `scale` membuat tinggi model 1,15 kali tinggi gambar patung di kartu (sekitar 52 sampai 79 mm). Keduanya baru diuji di simulasi, jadi masih perlu disetel di HP.
+
+## Cara kerja
+
+1. Halaman awal menampilkan panggung yang bergantian memperlihatkan keempat karya (ketuk untuk pindah, tahan untuk berhenti sejenak), petunjuk, dan tombol **Mulai pindai**. Kamera baru diminta setelah tombol ditekan.
+2. `js/main.js` membaca `data/artworks.json`, lalu membuat satu `mindar-image-target` per karya. Menambah atau mengubah karya cukup lewat file JSON itu.
+3. Saat kartu terdeteksi, model muncul di atas kartu dan lembar info meluncur naik berisi judul, seniman, tahun, media, ukuran, dan deskripsi. Lembar bisa dilipat lewat pegangannya (ketuk atau usap), dan turun lagi sekitar satu detik setelah kartu lepas dari kamera.
+4. Geser satu jari untuk memutar model, cubit (atau roda mouse) untuk memperbesar, **Atur ulang** untuk mengembalikan.
+5. Tombol **Lihat di galeri** muncul kalau `vrUrl` (alamat Artmeru VR) dan `vrScene` karya itu sudah diisi di `artworks.json`. Tautannya `vrUrl?scene=vrScene`.
+
+## Pelacakan
+
+Tiga penyetelan di luar bawaan MindAR, semuanya bisa diubah lewat `tracking` di `data/artworks.json`:
+
+| Kunci | Nilai | Guna |
+| --- | --- | --- |
+| `cameraWidth`, `cameraHeight` | 1920 × 1080 | MindAR tidak meminta resolusi, sehingga HP hanya memberi sekitar 640 × 480 dan kartu yang kecil atau jauh sulit dikenali. |
+| `cameraFov` | 70 | Sudut pandang kamera pada sisi panjang gambar. MindAR menganggap 45° pada tinggi gambar; di HP yang dipegang tegak itu meleset jauh, sehingga kemiringan kartu salah dihitung dan model bergetar. Isi 0 untuk kembali ke bawaan MindAR. |
+| `filterMinCF`, `filterBeta` | 0,001 dan 0,1 | Penghalus gerak. Makin kecil makin halus, tetapi model makin terlambat mengikuti kartu. |
+| `warmupTolerance`, `missTolerance` | 2 dan 12 | Jumlah frame terlacak sebelum model muncul, dan jumlah frame hilang sebelum model disembunyikan. |
+
+Kalau HP terasa berat di 1080p, buka dengan `?res=480` di ujung alamat. Hindari 720: MindAR hanya memeriksa potongan 256 piksel di tengah gambar pada resolusi itu, sehingga kartu yang dekat tidak muat.
+
+Di simulasi dengan kamera bersudut lebar, getaran puncak model turun dari 1 sampai 42 piksel (bawaan MindAR, 480p) menjadi 0 sampai 4 piksel, dan kartu terdeteksi sampai kemiringan 50° pada jarak 20 sampai 40 cm. Ini belum diukur di HP sungguhan. Kartu di layar HP lain jauh lebih sulit daripada kartu cetak: ukurannya separuh, dan layarnya memantulkan cahaya.
 
 ## Menjalankan secara lokal
 
@@ -38,7 +62,16 @@ Model sudah dikompres (geometri disederhanakan, tekstur WebP 1024 px) dan dimuat
 npm run dev
 ```
 
-Halaman ini statis dan tidak perlu proses build. Kamera di ponsel hanya bisa diakses lewat HTTPS, jadi uji di ponsel memakai hosting HTTPS (GitHub Pages / Netlify) atau tunnel seperti ngrok.
+Halaman ini statis dan tidak perlu proses build. Di laptop, `http://localhost:5174` sudah cukup untuk memakai webcam.
+
+## Mencoba di HP
+
+Kamera di HP hanya bisa diakses lewat HTTPS, jadi alamat `http://192.168.x.x` dari laptop tidak bisa dipakai. Pilihannya:
+
+- **GitHub Pages**: Settings → Pages → Deploy from a branch → `main`, folder `/ (root)`. Semua alamat file di aplikasi ini relatif, jadi bisa langsung jalan di alamat Pages.
+- **Tunnel** seperti ngrok ke `localhost:5174` untuk uji cepat tanpa push.
+
+Buka alamatnya di Chrome (Android) atau Safari (iPhone), tekan Mulai pindai, izinkan kamera, lalu arahkan ke kartu cetak atau ke gambar kartu di layar laptop.
 
 ## Bagian dari MeruVerse
 

@@ -2,7 +2,9 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="Kartu edukasi augmented reality untuk empat karya patung Gatot Kumaidi di Artmeru Gallery Malang." />
   <title>Artmeru AR</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,27 +14,109 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 </head>
 <body>
-  <!-- TODO: halaman awal dan tombol Mulai Pindai (RF-AR-01) -->
+  <!-- Halaman awal (RF-AR-01) -->
+  <main id="awal" class="awal">
+    <header class="kepala">
+      <div class="merek">Artmeru <b>AR</b></div>
+      <div class="kepala-ket">Artmeru Gallery, Malang</div>
+    </header>
 
-  <!-- Scene AR. Aktifkan setelah assets/targets/targets.mind tersedia:
-  <a-scene
-    mindar-image="imageTargetSrc: assets/targets/targets.mind; autoStart: false"
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false"
-    color-space="sRGB"
-    renderer="colorManagement: true">
+    <!-- Panggung: keempat karya bergantian, diisi js/main.js dari data/artworks.json -->
+    <section id="panggung" class="panggung" aria-label="Empat karya di kartu Artmeru AR"></section>
 
-    <a-assets>
-      <a-asset-item id="model-karya-01" src="assets/models/karya-01.glb"></a-asset-item>
-    </a-assets>
+    <section class="isi">
+      <h1>Pindai kartu, lihat patungnya dalam 3D.</h1>
+      <p class="lead">Arahkan kamera ke kartu Artmeru AR. Model 3D karya muncul di atas kartu bersama keterangannya.</p>
 
-    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <ol class="langkah">
+        <li><b>Siapkan kartu</b><span>Cetak lembar kartu, atau buka gambar kartu di layar lain.</span></li>
+        <li><b>Izinkan kamera</b><span>Tekan Mulai pindai, lalu izinkan akses kamera.</span></li>
+        <li><b>Arahkan ke kartu</b><span>Letakkan kartu di meja, kira-kira 20 sampai 40 cm dari kamera. Lihat dari arah agak miring supaya patung tampak berdiri.</span></li>
+      </ol>
+    </section>
 
-    <a-entity mindar-image-target="targetIndex: 0">
-      <a-gltf-model src="#model-karya-01" position="0.19 -0.37 0" rotation="90 0 0" scale="1.75 1.75 1.75"></a-gltf-model>
-    </a-entity>
-  </a-scene>
-  -->
+    <section class="kartu">
+      <div class="kartu-teks">
+        <h2>Belum punya kartu?</h2>
+        <p>Satu lembar A4 berisi keempat kartu. Cetak, atau buka di layar lain lalu pindai dari sana.</p>
+        <a class="tombol lembut" href="assets/cards/kartu-cetak-a4.pdf" target="_blank" rel="noopener">Buka lembar kartu</a>
+      </div>
+      <div class="kipas" aria-hidden="true">
+        <img src="assets/img/kartu-03.webp" alt="" width="360" height="504" loading="lazy" decoding="async" />
+        <img src="assets/img/kartu-02.webp" alt="" width="360" height="504" loading="lazy" decoding="async" />
+        <img src="assets/img/kartu-01.webp" alt="" width="360" height="504" loading="lazy" decoding="async" />
+      </div>
+    </section>
+
+    <footer class="kaki">
+      <span>Karya Gatot Kumaidi, Artmeru Gallery</span>
+      <span>MeruVerse, Kelompok 3</span>
+    </footer>
+
+    <div class="aksi">
+      <p id="pesan" class="pesan" role="alert" hidden></p>
+      <button id="mulai" class="tombol utama besar" type="button">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9V6.5A2.5 2.5 0 0 1 6.5 4H9M15 4h2.5A2.5 2.5 0 0 1 20 6.5V9M20 15v2.5a2.5 2.5 0 0 1-2.5 2.5H15M9 20H6.5A2.5 2.5 0 0 1 4 17.5V15M8 12h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Mulai pindai
+      </button>
+    </div>
+  </main>
+
+  <!-- Tampilan pindai: kamera, scene AR, dan lembar info. data-keadaan: memuat | mencari | karya -->
+  <div id="pindai" class="pindai" data-keadaan="memuat" hidden>
+    <!-- Scene MindAR dibuat oleh js/main.js dari data/artworks.json -->
+    <div id="ar" class="ar"></div>
+
+    <div class="hud">
+      <div class="hud-atas">
+        <div class="merek">Artmeru <b>AR</b></div>
+        <button id="selesai" class="tombol kaca" type="button">Selesai</button>
+      </div>
+
+      <div class="tengah memuat">
+        <div class="putaran" aria-hidden="true"></div>
+        <p class="pil">Menyiapkan kamera…</p>
+      </div>
+
+      <div class="tengah petunjuk">
+        <div class="bidik" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <p id="petunjuk-teks" class="pil">Arahkan kamera ke kartu Artmeru AR</p>
+      </div>
+
+      <!-- Lembar info karya (RF-AR-06) -->
+      <section id="panel" class="lembar" aria-live="polite">
+        <button id="p-lipat" class="pegangan" type="button" aria-expanded="true" aria-controls="p-isi" aria-label="Sembunyikan keterangan"><span></span></button>
+
+        <div id="p-kepala" class="lembar-kepala">
+          <div class="lembar-judul">
+            <h2 id="p-judul"></h2>
+            <p id="p-sub" class="sub"></p>
+          </div>
+          <div id="p-no" class="angka" aria-hidden="true"></div>
+        </div>
+
+        <div id="p-isi" class="lembar-isi">
+          <div class="lembar-dalam">
+            <dl class="meta">
+              <div><dt>Media</dt><dd id="p-media"></dd></div>
+              <div><dt>Ukuran</dt><dd id="p-ukuran"></dd></div>
+            </dl>
+            <p id="p-deskripsi" class="deskripsi"></p>
+            <a id="p-sumber" class="tautan" target="_blank" rel="noopener">Selengkapnya di artmeru.com</a>
+          </div>
+        </div>
+
+        <div class="lembar-aksi">
+          <span id="p-status" class="isyarat">Geser untuk memutar, cubit untuk memperbesar</span>
+          <button id="reset" class="tombol lembut kecil" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.6-5.9M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Atur ulang
+          </button>
+          <a id="p-vr" class="tombol utama kecil" hidden>Lihat di galeri</a>
+        </div>
+      </section>
+    </div>
+  </div>
 
   <script src="js/main.js"></script>
 </body>

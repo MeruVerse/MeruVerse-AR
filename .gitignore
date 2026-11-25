@@ -5,3 +5,5 @@ node_modules/
 # file sumber besar (simpan di drive, bukan di repo)
 *.blend1
 raw/
+# sertifikat HTTPS lokal untuk uji di HP
+*.pem
