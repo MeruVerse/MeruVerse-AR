@@ -617,6 +617,17 @@ a { color: inherit; }
 .lembar-aksi:has(#p-vr:not([hidden])) .isyarat { flex-basis: 100%; padding: 0 10px 2px; }
 .lembar-aksi:has(#p-vr:not([hidden])) .tombol { flex: 1; }
 
+/* Tombol suara: membacakan deskripsi. Selama berbunyi berubah menjadi tombol henti */
+.tombol.ikon { flex: none; width: 42px; padding: 0; }
+.lembar-aksi:has(#p-vr:not([hidden])) .tombol.ikon { flex: none; }
+.tombol.ikon .i-henti { display: none; }
+.tombol.ikon[aria-pressed="true"] { background: var(--aksen); color: var(--hitam); }
+.tombol.ikon[aria-pressed="true"]:active { background: var(--aksen-tekan); }
+.tombol.ikon[aria-pressed="true"] .i-dengar { display: none; }
+.tombol.ikon[aria-pressed="true"] .i-henti { display: block; }
+/* Di panel karya halaman awal, tombol suara menumpang di sudut kiri bawah gambar */
+.tombol.ikon.suara-karya { position: absolute; left: 14px; bottom: 14px; z-index: 2; width: 48px; min-height: 48px; box-shadow: 0 10px 24px -10px rgba(10, 10, 10, 0.6); }
+
 /* Saat berganti kartu, isi lembar masuk bergiliran */
 .lembar.ganti .lembar-judul, .lembar.ganti .angka, .lembar.ganti .lembar-dalam { animation: naik 0.5s var(--pegas) both; }
 .lembar.ganti .angka { animation-delay: 0.06s; }
