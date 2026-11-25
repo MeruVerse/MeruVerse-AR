@@ -77,13 +77,13 @@
       const y = (KARTU.pusatY - py * lebarTarget) / KARTU.tinggi;
       const kartu = `assets/img/kartu-${duaAngka(i + 1)}.webp`;
       return `
-      <div class="lapis" style="--x: ${x.toFixed(4)}; --y: ${y.toFixed(4)}; --h: 0.95">
+      <div class="lapis" style="--x: ${x.toFixed(4)}; --y: ${y.toFixed(4)}; --h: 1.15">
         <img class="kartu3d" src="${kartu}" alt="" decoding="async">
         <div class="bayang"></div>
         ${k.image ? `<img class="tegak" src="${esc(k.image)}" alt="${esc(k.title)}, patung karya ${esc(k.artist)}" decoding="async">` : ''}
       </div>`;
     }).join('');
-    ui.panggung.innerHTML = `<div class="meja">${lapis}</div>`;
+    ui.panggung.innerHTML = `<div class="melayang"><div class="meja">${lapis}</div></div>`;
     ui.ruas.innerHTML = data.artworks.map(() => '<i><u></u></i>').join('');
     ui.panggung.tabIndex = 0;
     ui.panggung.setAttribute('role', 'button');
@@ -91,11 +91,11 @@
 
     // Tinggi patung mengikuti bentuk fotonya: karya yang melebar dibuat lebih pendek
     ui.panggung.querySelectorAll('.tegak').forEach((img) => {
-      const atur = () => { if (img.naturalWidth) img.parentElement.style.setProperty('--h', Math.min(0.95, 0.88 * img.naturalHeight / img.naturalWidth).toFixed(3)); };
+      const atur = () => { if (img.naturalWidth) img.parentElement.style.setProperty('--h', Math.min(1.15, 0.94 * img.naturalHeight / img.naturalWidth).toFixed(3)); };
       if (img.complete) atur(); else img.addEventListener('load', atur, { once: true });
     });
 
-    const visual = ui.panggung.parentElement;
+    const hero = ui.panggung.closest('.hero');
     ui.ruas.addEventListener('animationend', (e) => { if (e.animationName === 'isi') tampilSlide(st.slide + 1); });
     ui.panggung.addEventListener('click', () => tampilSlide(st.slide + 1));
     ui.panggung.addEventListener('keydown', (e) => {
@@ -103,18 +103,18 @@
       else if (e.key === 'ArrowLeft') { e.preventDefault(); tampilSlide(st.slide - 1); }
     });
     // Tahan jari di adegan untuk berhenti sejenak
-    ui.panggung.addEventListener('pointerdown', () => visual.classList.add('jeda'));
-    ['pointerup', 'pointercancel', 'pointerleave'].forEach((n) => ui.panggung.addEventListener(n, () => visual.classList.remove('jeda')));
+    ui.panggung.addEventListener('pointerdown', () => hero.classList.add('jeda'));
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach((n) => ui.panggung.addEventListener(n, () => hero.classList.remove('jeda')));
 
     // Dengan mouse, kartu ikut miring mengikuti penunjuk
     const meja = ui.panggung.querySelector('.meja');
-    visual.addEventListener('pointermove', (e) => {
+    hero.addEventListener('pointermove', (e) => {
       if (e.pointerType !== 'mouse' || tanpaGerak()) return;
-      const r = visual.getBoundingClientRect();
+      const r = hero.getBoundingClientRect();
       meja.style.setProperty('--rz', `${(((e.clientX - r.left) / r.width) - 0.5) * 16}deg`);
       meja.style.setProperty('--rx', `${(0.5 - ((e.clientY - r.top) / r.height)) * 10}deg`);
     });
-    visual.addEventListener('pointerleave', () => { meja.style.removeProperty('--rz'); meja.style.removeProperty('--rx'); });
+    hero.addEventListener('pointerleave', () => { meja.style.removeProperty('--rz'); meja.style.removeProperty('--rx'); });
 
     requestAnimationFrame(() => tampilSlide(0));
   }
@@ -126,6 +126,14 @@
     st.slide = (i + lapis.length) % lapis.length;
     lapis.forEach((l, n) => l.classList.toggle('aktif', n === st.slide));
     const k = st.data.artworks[st.slide];
+    // Foto latar ikut berganti. Foto berikutnya dimuat lebih dulu supaya pergantiannya mulus
+    const latar = [...document.querySelectorAll('#latar img')];
+    const muat = (img) => { if (img && img.dataset.src) { img.srcset = img.dataset.srcset || ''; img.src = img.dataset.src; delete img.dataset.src; } };
+    if (latar.length) {
+      muat(latar[st.slide % latar.length]);
+      muat(latar[(st.slide + 1) % latar.length]);
+      latar.forEach((img, n) => img.classList.toggle('aktif', n === st.slide % latar.length));
+    }
     ui.ketJudul.textContent = k.title;
     ui.ketSub.textContent = [k.artist, k.year].filter(Boolean).join(', ');
     ui.ket.classList.remove('ganti');
@@ -138,32 +146,43 @@
     ruas[st.slide].classList.add('jalan');
   }
 
-  // Bagian "Empat karya": satu kartu per karya
+  // Mainkan lagi animasi patung berdiri pada karya yang sedang tampil (dipakai js/landing.js setelah pramuat)
+  window.artmeruUlangSlide = () => {
+    ui.panggung.querySelectorAll('.lapis').forEach((l) => l.classList.remove('aktif'));
+    void ui.panggung.offsetWidth;
+    tampilSlide(st.slide);
+  };
+
+  // Alamat ruang tempat karya ini berada di tur virtual MeruVerse (kosong kalau belum diisi di artworks.json)
+  function tautanVr(k) {
+    const dasar = st.data && st.data.vrUrl;
+    if (!dasar || !k.vrScene) return '';
+    return `${dasar}${dasar.includes('?') ? '&' : '?'}scene=${encodeURIComponent(k.vrScene)}`;
+  }
+
+  // Bagian "Empat karya": satu panel per karya
   function buatDaftarKarya(data) {
     ui.daftar.innerHTML = data.artworks.map((k, i) => `
-      <article class="karya-item muncul">
+      <article class="karya-item">
         <div class="karya-gambar">
           <span class="karya-angka" aria-hidden="true">${duaAngka(i + 1)}</span>
           ${k.image ? `<img src="${esc(k.image)}" alt="${esc(k.title)}, patung karya ${esc(k.artist)}" loading="lazy" decoding="async">` : ''}
         </div>
         <div class="karya-teks">
+          <p class="alis">${esc([k.artist, k.year].filter(Boolean).join(', '))}</p>
           <h3>${esc(k.title)}</h3>
-          <p class="oleh">${esc([k.artist, k.year].filter(Boolean).join(', '))}</p>
           <p class="uraian">${esc(k.description || '')}</p>
-          <dl><dt>Media</dt><dd>${esc(k.medium || '-')}</dd><dt>Ukuran</dt><dd>${esc(k.size || '-')}</dd></dl>
+          <dl>
+            <div><dt class="alis">Media</dt><dd>${esc(k.medium || '-')}</dd></div>
+            <div><dt class="alis">Ukuran</dt><dd>${esc(k.size || '-')}</dd></div>
+          </dl>
+          ${tautanVr(k) ? `<a class="garis-api karya-vr" href="${esc(tautanVr(k))}" target="_blank" rel="noopener">Lihat di tur virtual</a>` : ''}
         </div>
       </article>`).join('');
   }
 
-  // Elemen .muncul tampil sekali saat masuk layar
-  function pasangMuncul() {
-    const el = document.querySelectorAll('.muncul');
-    if (!('IntersectionObserver' in window) || tanpaGerak()) { el.forEach((e) => e.classList.add('tampak')); return; }
-    const io = new IntersectionObserver((masuk) => {
-      masuk.forEach((m) => { if (m.isIntersecting) { m.target.classList.add('tampak'); io.unobserve(m.target); } });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
-    el.forEach((e) => io.observe(e));
-  }
+  // Beri tahu js/landing.js bahwa isi halaman sudah dibuat, atau bahwa tampilan pindai dibuka dan ditutup
+  const kabari = (nama, detail) => document.dispatchEvent(new CustomEvent(`artmeru:${nama}`, { detail }));
 
   function bisaMemindai() {
     if (!window.AFRAME || !AFRAME.systems['mindar-image-system']) {
@@ -287,7 +306,9 @@
 
     keadaan('memuat');
     ui.pindai.hidden = false;
-    ui.awal.hidden = true;
+    ui.awal.inert = true;
+    document.documentElement.classList.add('memindai');
+    kabari('pindai', { buka: true });
     st.batal = false;
 
     mintaResolusiKamera();
@@ -335,7 +356,9 @@
     st.karya.forEach((k) => { k.target.object3D.visible = false; });
     if (st.scene) st.scene.pause();
     ui.pindai.hidden = true;
-    ui.awal.hidden = false;
+    ui.awal.inert = false;
+    document.documentElement.classList.remove('memindai');
+    kabari('pindai', { buka: false });
     tampilSlide(st.slide);
   }
 
@@ -396,9 +419,9 @@
     ui.sumber.hidden = !info.source;
     if (info.source) ui.sumber.href = info.source;
 
-    const vr = st.data.vrUrl && info.vrScene;
+    const vr = tautanVr(info);
     ui.vr.hidden = !vr;
-    if (vr) ui.vr.href = `${st.data.vrUrl}${st.data.vrUrl.includes('?') ? '&' : '?'}scene=${encodeURIComponent(info.vrScene)}`;
+    if (vr) ui.vr.href = vr;
 
     ui.isi.firstElementChild.scrollTop = 0;
     perbaruiStatus();
@@ -511,7 +534,6 @@
 
   // ---------- Awal ----------
 
-  document.documentElement.classList.add('js');
   document.querySelectorAll('[data-mulai]').forEach((b) => b.addEventListener('click', mulai));
   ui.selesai.addEventListener('click', selesai);
   ui.reset.addEventListener('click', aturUlang);
@@ -527,6 +549,6 @@
 
   fetch('data/artworks.json')
     .then((res) => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
-    .then((data) => { st.data = data; buatPanggung(data); buatDaftarKarya(data); pasangMuncul(); })
-    .catch((err) => { console.error('Gagal memuat artworks.json', err); pasangMuncul(); pesan('Data karya gagal dimuat. Muat ulang halaman.'); });
+    .then((data) => { st.data = data; buatPanggung(data); buatDaftarKarya(data); window.artmeruSiap = true; kabari('siap'); })
+    .catch((err) => { console.error('Gagal memuat artworks.json', err); window.artmeruSiap = true; kabari('siap'); pesan('Data karya gagal dimuat. Muat ulang halaman.'); });
 })();

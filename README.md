@@ -5,10 +5,12 @@ Kartu edukasi augmented reality untuk empat karya patung Artmeru Gallery, berbas
 ## Struktur
 
 - `index.html`: halaman awal, tampilan pindai, dan lembar info
+- `js/landing.js`: gerak halaman awal (pramuat, pembuka hero, muncul saat digulir, galeri karya yang bergeser, tombol magnet)
+- `favicon.svg`, `favicon.ico`, `apple-touch-icon.png`: ikon situs, disalin dari repo tur virtual MeruVerse
 - `js/main.js`: membangun scene MindAR dari data, deteksi kartu, interaksi model, panel info
-- `css/style.css`: gaya antarmuka (palet artmeru.com, huruf Inter)
+- `css/style.css`: gaya antarmuka. Bahasa visualnya mengikuti situs tur virtual MeruVerse: palet yang sama, huruf Geist, judul besar, tombol pil berpanah
 - `data/artworks.json`: data empat karya (judul, seniman, media, model, gambar, skala, posisi, scene VR)
-- `assets/img/`: gambar untuk antarmuka. `karya-0X.webp` potongan foto patung, `kartu-0X.webp` kartu ukuran kecil untuk kartu 3D di halaman awal
+- `assets/img/`: gambar untuk antarmuka. `karya-0X.webp` potongan foto patung, `kartu-0X.webp` kartu ukuran kecil untuk kartu 3D di halaman awal, `galeri-N.webp` foto ruang galeri untuk latar hero (disalin dari `public/preview/` di repo tur virtual)
 - `assets/cards/`: desain kartu yang dicetak
 - `assets/targets/`: `targets.mind` dan gambar sumbernya di `src/`
 - `assets/models/`: model 3D `.glb` hasil pindaian karya (izin seniman dan galeri)
@@ -33,13 +35,21 @@ Semua karya oleh Gatot Kumaidi. Data karya diambil dari artmeru.com.
 
 Model sudah dikompres (geometri disederhanakan, tekstur WebP 1024 px) dan dimuat tanpa decoder tambahan di A-Frame 1.5.0. Model berdiri di sumbu Y dengan titik pusat di dasarnya, jadi di atas kartu perlu `rotation="90 0 0"`. Nilai `scale` dan `position` tiap model ada di `data/artworks.json`. `position` menaruh model di dasar gambar patung pada kartu, dan `scale` membuat tinggi model 1,15 kali tinggi gambar patung di kartu (sekitar 52 sampai 79 mm). Keduanya baru diuji di simulasi, jadi masih perlu disetel di HP.
 
+## Pustaka
+
+Semua dimuat dari CDN, tanpa proses build:
+
+- A-Frame 1.5.0 dan MindAR 1.2.5 untuk AR.
+- GSAP 3.12.5 dengan ScrollTrigger, dan Lenis 1.1.13, untuk gerak halaman awal. Durasi, easing, dan jaraknya disamakan dengan situs tur virtual. Kalau pustaka ini gagal dimuat atau HP diatur "kurangi gerakan", halaman tetap tampil utuh tanpa animasi.
+- Huruf Geist dari Google Fonts.
+
 ## Cara kerja
 
-1. Halaman awal berisi kartu 3D yang patungnya berdiri dari gambarnya dan bergantian memperlihatkan keempat karya (ketuk untuk pindah, tahan untuk berhenti sejenak), tiga langkah pemakaian, daftar karya, dan tautan lembar kartu. Kamera baru diminta setelah tombol **Mulai pindai** ditekan.
+1. Halaman awal dibuka dengan pramuat berhitung, lalu hero berlatar foto galeri dengan judul tembus pandang dan kartu 3D. Tiap karya muncul lewat urutan bidik, pindai, lalu patungnya berdiri dari gambarnya, dan bergantian memperlihatkan keempat karya (ketuk untuk pindah, tahan untuk berhenti sejenak). Di bawahnya ada cara pakai, galeri empat karya, lembar kartu, ajakan memindai, dan bagian penghubung ke tur virtual. Kamera baru diminta setelah tombol **Mulai pindai** ditekan.
 2. `js/main.js` membaca `data/artworks.json`, lalu membuat satu `mindar-image-target` per karya. Menambah atau mengubah karya cukup lewat file JSON itu.
 3. Saat kartu terdeteksi, model muncul di atas kartu dan lembar info meluncur naik berisi judul, seniman, tahun, media, ukuran, dan deskripsi. Lembar bisa dilipat lewat pegangannya (ketuk atau usap), dan turun lagi sekitar satu detik setelah kartu lepas dari kamera.
 4. Geser satu jari untuk memutar model, cubit (atau roda mouse) untuk memperbesar, **Atur ulang** untuk mengembalikan.
-5. Tombol **Lihat di galeri** muncul kalau `vrUrl` (alamat Artmeru VR) dan `vrScene` karya itu sudah diisi di `artworks.json`. Tautannya `vrUrl?scene=vrScene`.
+5. Tombol **Lihat di galeri** di lembar info membuka tur virtual MeruVerse tepat di ruang tempat karya itu berada. Alamatnya `vrUrl?scene=vrScene` dari `artworks.json`: Kait dan Relax di `ruang-pamer-2`, Kawan Bergelut dan Menetes di `ruang-pamer-3-part-1` (sesuai `src/tour/data/scenes.ts` di repo tur virtual). Halaman awal juga punya bagian penghubung ke tur virtual dan tautan "Lihat di tur virtual" di tiap karya.
 
 ## Pelacakan
 

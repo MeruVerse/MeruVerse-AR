@@ -1,7 +1,7 @@
 {
   "targets": "assets/targets/targets.mind",
   "targetWidthMm": 87,
-  "vrUrl": "",
+  "vrUrl": "https://meruverse.github.io/MeruVerse-VR/tour.html",
   "tracking": {
     "cameraWidth": 1920,
     "cameraHeight": 1080,
@@ -27,7 +27,7 @@
       "scale": 1.28,
       "position": "0.19 -0.37 0",
       "rotation": "90 0 0",
-      "vrScene": "",
+      "vrScene": "ruang-pamer-2",
       "source": "https://www.artmeru.com/id/artworks/kait"
     },
     {
@@ -45,7 +45,7 @@
       "scale": 2.7,
       "position": "0.11 -0.39 0",
       "rotation": "90 0 0",
-      "vrScene": "",
+      "vrScene": "ruang-pamer-2",
       "source": "https://www.artmeru.com/id/artworks/relax"
     },
     {
@@ -63,7 +63,7 @@
       "scale": 3.34,
       "position": "0.02 -0.36 0",
       "rotation": "90 0 0",
-      "vrScene": "",
+      "vrScene": "ruang-pamer-3-part-1",
       "source": "https://www.artmeru.com/id/artworks/kawan-bergelut"
     },
     {
@@ -81,7 +81,7 @@
       "scale": 2.09,
       "position": "0.01 -0.39 0",
       "rotation": "90 0 0",
-      "vrScene": "",
+      "vrScene": "ruang-pamer-3-part-1",
       "source": "https://www.artmeru.com/id/artworks/menetes"
     }
   ]
