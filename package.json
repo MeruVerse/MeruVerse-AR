@@ -1,0 +1,8 @@
+{
+  "name": "artmeru-ar",
+  "private": true,
+  "description": "Artmeru AR: kartu edukasi augmented reality karya patung Artmeru Gallery Malang",
+  "scripts": {
+    "dev": "npx --yes serve . -l 5174"
+  }
+}

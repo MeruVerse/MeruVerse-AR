@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artmeru AR</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+<body>
+  <!-- TODO: halaman awal dan tombol Mulai Pindai (RF-AR-01) -->
+
+  <!-- Scene AR. Aktifkan setelah assets/targets/targets.mind tersedia:
+  <a-scene
+    mindar-image="imageTargetSrc: assets/targets/targets.mind; autoStart: false"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    color-space="sRGB"
+    renderer="colorManagement: true">
+
+    <a-assets>
+      <a-asset-item id="model-karya-01" src="assets/models/karya-01.glb"></a-asset-item>
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <a-entity mindar-image-target="targetIndex: 0">
+      <a-gltf-model src="#model-karya-01" scale="0.1 0.1 0.1"></a-gltf-model>
+    </a-entity>
+  </a-scene>
+  -->
+
+  <script src="js/main.js"></script>
+</body>
+</html>

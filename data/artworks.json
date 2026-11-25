@@ -1,0 +1,8 @@
+{
+  "artworks": [
+    { "id": "karya-01", "targetIndex": 0, "title": "", "artist": "", "year": "", "medium": "Kayu dan batu", "size": "", "description": "", "model": "assets/models/karya-01.glb", "vrScene": "" },
+    { "id": "karya-02", "targetIndex": 1, "title": "", "artist": "", "year": "", "medium": "Kayu", "size": "", "description": "", "model": "assets/models/karya-02.glb", "vrScene": "" },
+    { "id": "karya-03", "targetIndex": 2, "title": "", "artist": "", "year": "", "medium": "Kayu", "size": "", "description": "", "model": "assets/models/karya-03.glb", "vrScene": "" },
+    { "id": "karya-04", "targetIndex": 3, "title": "", "artist": "", "year": "", "medium": "Kayu", "size": "", "description": "", "model": "assets/models/karya-04.glb", "vrScene": "" }
+  ]
+}

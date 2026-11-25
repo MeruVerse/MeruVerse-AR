@@ -1,0 +1,14 @@
+:root {
+  --merah: #e5483a;
+  --gelap: #1d1714;
+  --terang: #f6f2ef;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--terang);
+  color: var(--gelap);
+}
