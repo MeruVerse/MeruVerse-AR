@@ -36,7 +36,6 @@ Semua karya oleh Gatot Kumaidi. Data karya diambil dari artmeru.com.
 
 Model sudah dikompres (geometri disederhanakan, tekstur WebP 1024 px) dan dimuat tanpa decoder tambahan di A-Frame 1.5.0. Model berdiri di sumbu Y dengan titik pusat di dasarnya, jadi di atas kartu perlu `rotation="90 0 0"`. Nilai `scale` dan `position` tiap model ada di `data/artworks.json`. `position` menaruh model di dasar gambar patung pada kartu, dan `scale` membuat tinggi model 1,15 kali tinggi gambar patung di kartu (sekitar 52 sampai 79 mm). Keduanya baru diuji di simulasi, jadi masih perlu disetel di HP.
 
-<<<<<<< HEAD
 ## Pustaka
 
 Semua dimuat dari CDN, tanpa proses build:
@@ -44,11 +43,9 @@ Semua dimuat dari CDN, tanpa proses build:
 - A-Frame 1.5.0 dan MindAR 1.2.5 untuk AR.
 - GSAP 3.12.5 dengan ScrollTrigger, dan Lenis 1.1.13, untuk gerak halaman awal. Durasi, easing, dan jaraknya disamakan dengan situs tur virtual. Kalau pustaka ini gagal dimuat atau HP diatur "kurangi gerakan", halaman tetap tampil utuh tanpa animasi.
 - Huruf Geist dari Google Fonts.
-=======
 ## Narasi
 
-Tombol pengeras suara membacakan deskripsi karya. Tombolnya ada di lembar info tampilan pindai dan di tiap kartu daftar karya di halaman awal. Narasinya berkas MP3 siap pakai yang dibuat sekali dengan ElevenLabs Eleven v4 (suara Matilda) lewat OpenRouter, jadi aplikasi tidak memanggil layanan apa pun saat dipakai. Teks yang dibacakan sama persis dengan `description` di `data/artworks.json`: kalau deskripsi diubah, narasinya perlu dibuat ulang. Karya tanpa kunci `audio` tidak menampilkan tombol suara.
->>>>>>> 5c86d1214204cfd1ec448c02cdf3d5428bb9ea10
+Tombol pengeras suara membacakan deskripsi karya. Tombolnya ada di lembar info tampilan pindai dan di tiap panel karya di halaman awal (di sudut kiri bawah gambarnya). Narasinya berkas MP3 siap pakai yang dibuat sekali dengan ElevenLabs Eleven v4 (suara Matilda) lewat OpenRouter, jadi aplikasi tidak memanggil layanan apa pun saat dipakai. Teks yang dibacakan sama persis dengan `description` di `data/artworks.json`: kalau deskripsi diubah, narasinya perlu dibuat ulang. Karya tanpa kunci `audio` tidak menampilkan tombol suara.
 
 ## Cara kerja
 
