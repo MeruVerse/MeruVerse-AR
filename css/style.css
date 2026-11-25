@@ -289,10 +289,13 @@ button { font: inherit; color: inherit; }
   filter: drop-shadow(0 18px 16px rgba(0, 0, 0, 0.5));
   transition: transform 0.6s var(--pegas);
 }
-.karya-teks { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.karya-teks { position: relative; padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .karya-teks h3 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; }
 .karya-teks .oleh { margin-top: -6px; font-size: 0.86rem; font-weight: 500; color: #a3a3a3; }
 .karya-teks .uraian { font-size: 0.9rem; color: #cfcfcf; }
+/* Tombol suara di kartu: menumpang di tepi bawah gambar supaya judul tidak terdesak */
+.tombol.suara-karya { position: absolute; top: -32px; right: 18px; background: var(--putih); color: var(--hitam); box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.75); }
+.tombol.ikon.suara-karya { width: 46px; min-height: 46px; }
 .karya-teks dl { margin-top: auto; padding-top: 12px; border-top: 1px solid #2c2c2c; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 0.82rem; }
 .karya-teks dt { color: #8f8f8f; }
 .karya-teks dd { font-weight: 600; }

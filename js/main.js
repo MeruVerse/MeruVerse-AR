@@ -16,6 +16,10 @@
     'Lihat agak dari atas, jangan terlalu miring',
   ];
   const JEDA_SARAN = 6000;
+  // Ikon tombol suara di daftar karya (sama dengan tombol #p-suara di index.html):
+  // pengeras suara, dan kotak henti yang tampil selama narasi berbunyi
+  const IKON_SUARA = '<svg class="i-dengar" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4zM15.6 9.2a4 4 0 0 1 0 5.6M18.3 6.6a7.6 7.6 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '<svg class="i-henti" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/></svg>';
 
   // Nilai bawaan pelacakan. Bisa ditimpa lewat "tracking" di data/artworks.json.
   // - filterMinCF, filterBeta: penghalus gerak MindAR. Makin kecil makin halus, tetapi model makin terlambat mengikuti kartu.
@@ -150,6 +154,7 @@
           <h3>${esc(k.title)}</h3>
           <p class="oleh">${esc([k.artist, k.year].filter(Boolean).join(', '))}</p>
           <p class="uraian">${esc(k.description || '')}</p>
+          ${k.audio ? `<button class="tombol ikon suara-karya" type="button" data-suara="${esc(k.audio)}" aria-label="Dengarkan deskripsi ${esc(k.title)}" aria-pressed="false">${IKON_SUARA}</button>` : ''}
           <dl><dt>Media</dt><dd>${esc(k.medium || '-')}</dd><dt>Ukuran</dt><dd>${esc(k.size || '-')}</dd></dl>
         </div>
       </article>`).join('');
@@ -285,6 +290,7 @@
     pesan('');
     if (!bisaMemindai()) return;
 
+    hentikanSuara(); // narasi dari daftar karya tidak ikut ke tampilan pindai
     keadaan('memuat');
     ui.pindai.hidden = false;
     ui.awal.hidden = true;
