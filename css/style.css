@@ -518,6 +518,14 @@ button { font: inherit; color: inherit; }
 .lembar-aksi { display: flex; align-items: center; gap: 8px; padding: 10px 12px 12px 22px; }
 .isyarat { flex: 1; min-width: 0; font-size: 0.76rem; font-weight: 500; color: var(--abu); line-height: 1.3; }
 
+/* Tombol suara: membacakan deskripsi. Selama berbunyi berubah menjadi tombol henti */
+.tombol.ikon { flex: none; width: 42px; padding: 0; }
+.tombol.ikon .i-henti { display: none; }
+.tombol.ikon[aria-pressed="true"] { background: var(--aksen); color: var(--putih); }
+.tombol.ikon[aria-pressed="true"]:active { background: var(--aksen-tekan); }
+.tombol.ikon[aria-pressed="true"] .i-dengar { display: none; }
+.tombol.ikon[aria-pressed="true"] .i-henti { display: block; }
+
 /* Saat berganti kartu, isi lembar masuk bergiliran */
 .lembar.ganti .lembar-judul, .lembar.ganti .angka, .lembar.ganti .lembar-dalam { animation: naik 0.5s var(--pegas) both; }
 .lembar.ganti .angka { animation-delay: 0.06s; }

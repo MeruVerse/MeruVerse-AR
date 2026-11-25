@@ -35,7 +35,7 @@
     pindai: $('pindai'), ar: $('ar'), selesai: $('selesai'), petunjuk: $('petunjuk-teks'),
     panel: $('panel'), kepala: $('p-kepala'), no: $('p-no'), judul: $('p-judul'), sub: $('p-sub'),
     media: $('p-media'), ukuran: $('p-ukuran'), deskripsi: $('p-deskripsi'), sumber: $('p-sumber'),
-    isi: $('p-isi'), lipat: $('p-lipat'), status: $('p-status'), reset: $('reset'), vr: $('p-vr'),
+    isi: $('p-isi'), lipat: $('p-lipat'), status: $('p-status'), suara: $('p-suara'), reset: $('reset'), vr: $('p-vr'),
   };
 
   const st = {
@@ -332,6 +332,7 @@
     clearTimeout(st.timerLepas);
     clearInterval(st.timerSaran);
     st.aktif = null;
+    hentikanSuara();
     st.karya.forEach((k) => { k.target.object3D.visible = false; });
     if (st.scene) st.scene.pause();
     ui.pindai.hidden = true;
@@ -400,6 +401,7 @@
     ui.vr.hidden = !vr;
     if (vr) ui.vr.href = `${st.data.vrUrl}${st.data.vrUrl.includes('?') ? '&' : '?'}scene=${encodeURIComponent(info.vrScene)}`;
 
+    siapkanSuara(k);
     ui.isi.firstElementChild.scrollTop = 0;
     perbaruiStatus();
 
@@ -440,6 +442,62 @@
       el.addEventListener('pointerup', akhirUsap);
       el.addEventListener('pointercancel', () => { y0 = null; });
     });
+  }
+
+  // ---------- Suara deskripsi ----------
+  // Narasi tiap deskripsi adalah berkas MP3 siap pakai (kunci "audio" di data/artworks.json).
+  // Satu pemutar dipakai bersama oleh tombol suara di daftar karya dan di lembar info.
+  // Tiap tombol menyimpan alamat narasinya di data-suara.
+
+  const suara = new Audio();
+  suara.preload = 'auto';
+  let sumberSuara = ''; // narasi yang sedang dimuat di pemutar
+  const berbunyi = () => !suara.paused && !suara.ended && !suara.error;
+
+  // Tombol menyala hanya kalau narasinya sendiri yang sedang berbunyi
+  function tandaiSuara() {
+    const hidup = berbunyi();
+    document.querySelectorAll('[data-suara]').forEach((b) => {
+      b.setAttribute('aria-pressed', String(hidup && b.dataset.suara === sumberSuara));
+    });
+  }
+
+  function hentikanSuara() {
+    suara.pause();
+    suara.currentTime = 0;
+    tandaiSuara();
+  }
+
+  function muatSuara(src) {
+    if (sumberSuara === src) return;
+    hentikanSuara();
+    sumberSuara = src;
+    suara.src = src;
+  }
+
+  // Dipanggil saat lembar diisi: narasi dimuat lebih dulu supaya langsung berbunyi saat tombol ditekan.
+  // Kalau kartu yang sama terdeteksi lagi, narasi yang sedang berjalan dibiarkan.
+  function siapkanSuara(k) {
+    const src = k.info.audio || '';
+    ui.suara.hidden = !src;
+    ui.suara.dataset.suara = src;
+    if (src) muatSuara(src);
+    else hentikanSuara();
+    tandaiSuara();
+  }
+
+  // Tombol suara: putar narasinya dari awal, atau hentikan kalau sedang berbunyi
+  function ubahSuara(src) {
+    if (!src) return;
+    if (berbunyi() && sumberSuara === src) { hentikanSuara(); return; }
+    muatSuara(src);
+    if (suara.error) suara.load(); // coba muat ulang setelah gagal, misalnya karena jaringan putus
+    suara.currentTime = 0;
+    suara.play().catch((err) => {
+      if (err.name !== 'AbortError') console.warn('Narasi gagal diputar', err);
+      tandaiSuara();
+    });
+    tandaiSuara();
   }
 
   // ---------- Putar, perbesar, atur ulang (RF-AR-05) ----------
@@ -516,11 +574,18 @@
   ui.selesai.addEventListener('click', selesai);
   ui.reset.addEventListener('click', aturUlang);
   ui.lipat.addEventListener('click', () => lipat());
+  // Tombol suara ada di lembar info dan, setelah data dimuat, di tiap kartu daftar karya
+  document.addEventListener('click', (e) => {
+    const tombol = e.target.closest('[data-suara]');
+    if (tombol) ubahSuara(tombol.dataset.suara);
+  });
+  ['play', 'pause', 'ended', 'error'].forEach((ev) => suara.addEventListener(ev, tandaiSuara));
   pasangUsapLembar();
   pasangGestur();
 
-  // Kamera berhenti mengirim gambar saat tab disembunyikan; lanjutkan lagi saat kembali
+  // Kamera berhenti mengirim gambar saat tab disembunyikan; lanjutkan lagi saat kembali. Narasi ikut berhenti.
   document.addEventListener('visibilitychange', () => {
+    if (document.hidden) hentikanSuara();
     if (document.hidden || !st.siap || !st.sistem || !st.sistem.video) return;
     st.sistem.video.play().catch(() => {});
   });
